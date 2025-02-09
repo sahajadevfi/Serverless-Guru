@@ -3,7 +3,7 @@ import boto3
 import os
 from botocore.exceptions import ClientError
 
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 table_name = os.environ.get('DYNAMODB_TABLE', 'ItemsTable')
 table = dynamodb.Table(table_name)
 
@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     http_method = event.get("httpMethod", "")
     path = event.get("path", "")
     body = json.loads(event.get("body", "{}")) if event.get("body") else {}
-    
+    print(f'body is {body}')
     if http_method == "POST":
         return create_item(body)
     elif http_method == "GET":
@@ -46,15 +46,22 @@ def get_item(params):
     except ClientError as e:
         return {"statusCode": 500, "body": json.dumps({"message": str(e)})}
 
-def update_item(item_id, new_value):
-    response = table.update_item(
-        Key={"id": item_id},
-        UpdateExpression="SET #val = :value",
-        ExpressionAttributeNames={"#val": "value"},
-        ExpressionAttributeValues={":value": new_value},
-        ReturnValues="UPDATED_NEW"
-    )
-    return response
+def update_item(data):
+    if "id" not in data:
+        return {"statusCode": 400, "body": json.dumps({"message": "Missing item ID"})}
+    try:
+        id = data["id"]
+        new_value = data.get("value", "")
+        response = table.update_item(
+            Key={"id": id},
+            UpdateExpression="SET #val = :value",
+            ExpressionAttributeNames={"#val": "value"},
+            ExpressionAttributeValues={":value": new_value},
+            ReturnValues="UPDATED_NEW"
+        )
+        return {"statusCode": 200, "body": f'item updated: {data}'}
+    except ClientError as e:
+        return {"statusCode": 500, "body": json.dumps({"message": str(e)})}
 
 def delete_item(data):
     if "id" not in data:
