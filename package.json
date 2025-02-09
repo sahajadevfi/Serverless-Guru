@@ -1,0 +1,20 @@
+{
+  "name": "serverless-guru",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahajadevfi/Serverless-Guru.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sahajadevfi/Serverless-Guru/issues"
+  },
+  "homepage": "https://github.com/sahajadevfi/Serverless-Guru#readme",
+  "description": ""
+}
