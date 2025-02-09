@@ -21,7 +21,7 @@ provider:
 
 functions:
   crudHandler:
-    handler: handler.lambda_handler
+    handler: lambda_function.lambda_handler
     events:
       - http:
           path: item
