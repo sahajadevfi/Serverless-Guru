@@ -3,7 +3,9 @@ name: Deploy Serverless Application
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - main
+      - develop
+      - test
 
 permissions:
   id-token: write
