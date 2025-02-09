@@ -46,22 +46,15 @@ def get_item(params):
     except ClientError as e:
         return {"statusCode": 500, "body": json.dumps({"message": str(e)})}
 
-def update_item(data):
-    if "id" not in data:
-        return {"statusCode": 400, "body": json.dumps({"message": "Missing item ID"})}
-    
-    update_expression = "SET " + ", ".join(f"{k} = :{k}" for k in data if k != "id")
-    expression_values = {f":{k}": v for k, v in data.items() if k != "id"}
-    
-    try:
-        table.update_item(
-            Key={"id": data["id"]},
-            UpdateExpression=update_expression,
-            ExpressionAttributeValues=expression_values
-        )
-        return {"statusCode": 200, "body": json.dumps({"message": "Item updated"})}
-    except ClientError as e:
-        return {"statusCode": 500, "body": json.dumps({"message": str(e)})}
+def update_item(item_id, new_value):
+    response = table.update_item(
+        Key={"id": item_id},
+        UpdateExpression="SET #val = :value",
+        ExpressionAttributeNames={"#val": "value"},
+        ExpressionAttributeValues={":value": new_value},
+        ReturnValues="UPDATED_NEW"
+    )
+    return response
 
 def delete_item(data):
     if "id" not in data:
