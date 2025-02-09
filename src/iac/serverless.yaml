@@ -1,0 +1,55 @@
+service: crud-api
+
+provider:
+  name: aws
+  runtime: python3.12
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE: ItemsTable
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: 
+            - arn:aws:dynamodb:${self:provider.region}:*:table/ItemsTable
+
+functions:
+  crudHandler:
+    handler: handler.lambda_handler
+    events:
+      - http:
+          path: item
+          method: post
+          cors: true
+      - http:
+          path: item
+          method: get
+          cors: true
+      - http:
+          path: item
+          method: put
+          cors: true
+      - http:
+          path: item
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    ItemsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ItemsTable
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
