@@ -69,6 +69,6 @@ def delete_item(data):
     
     try:
         table.delete_item(Key={"id": data["id"]})
-        return {"statusCode": 200, "body": json.dumps({"message": "Item del eted"})}
+        return {"statusCode": 200, "body": json.dumps({"message": "Item deleted"})}
     except ClientError as e:
         return {"statusCode": 500, "body": json.dumps({"message": str(e)})}
